@@ -1,0 +1,1 @@
+{"root":["./src/app.ts","./src/server.ts","./src/controllers/authController.ts","./src/controllers/bookmarkController.ts","./src/models/Bookmark.ts","./src/models/User.ts","./src/routes/authRoutes.ts","./src/routes/bookmarkRoutes.ts","./src/types/bookmark.ts","./src/types/user.ts","./src/utils/db.ts","./src/utils/hash.ts"],"version":"5.8.3"}
