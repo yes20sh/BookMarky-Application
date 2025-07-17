@@ -1,10 +1,11 @@
-import { useAuth } from '../hooks/useAuth';
 import { useBookmarksQuery } from '../api/bookmarks';
 import BookmarkItem from './BookmarkItem';
+import { useAuthReducer } from '../hooks/useAuthReducer'; 
 
 const BookmarkList = () => {
-  const { user } = useAuth();
-  const { data, isLoading, error } = useBookmarksQuery(user?.userId || '');
+  const { user } = useAuthReducer();
+  const userId = user?.userId || '';
+  const { data, isLoading, error } = useBookmarksQuery(userId);
 
   return (
     <div className="bg-zinc-900 text-zinc-100 p-6 rounded-2xl shadow-lg border border-zinc-800 max-w-2xl mx-auto mt-10 space-y-4">

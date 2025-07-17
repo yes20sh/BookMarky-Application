@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useLoginMutation } from '../api/auth';
-import type { LoginInput } from '../types/index';
-import { useAuth } from '../hooks/useAuth';
+import type { LoginInput } from '../types';
 import { Link } from 'react-router-dom';
+import { useAuthReducer } from '../hooks/useAuthReducer';
 
 const LoginForm = () => {
   const [form, setForm] = useState<LoginInput>({ username: '', password: '' });
-  const { login } = useAuth();
+  const { login } = useAuthReducer();
   const { mutate, isPending, error } = useLoginMutation();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,6 +18,7 @@ const LoginForm = () => {
     mutate(form, {
       onSuccess: (data) => {
         login(data);
+        localStorage.setItem('user', JSON.stringify(data)); // optional
       },
     });
   };

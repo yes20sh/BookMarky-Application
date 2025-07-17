@@ -1,10 +1,11 @@
 import type { IBookmark } from '../types/index';
 import { useDeleteBookmarkMutation } from '../api/bookmarks';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthReducer } from '../hooks/useAuthReducer'; // ✅ Custom hook
 
 const BookmarkItem = ({ bookmark }: { bookmark: IBookmark }) => {
-  const { user } = useAuth();
-  const { mutate: deleteBookmark, isPending } = useDeleteBookmarkMutation(user?.userId || '');
+  const { user } = useAuthReducer(); // ✅ Use auth reducer hook
+  const userId = user?.userId || '';
+  const { mutate: deleteBookmark, isPending } = useDeleteBookmarkMutation(userId);
 
   const handleDelete = () => {
     if (bookmark._id) {

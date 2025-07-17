@@ -1,26 +1,25 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { registerUser } from '../api/auth';
-import { useAuth } from '../hooks/useAuth';
 import type { RegisterInput } from '../types/index';
 import { Link } from 'react-router-dom';
+import { useAuthReducer } from '../hooks/useAuthReducer';
 
 const RegisterForm = () => {
-  const { setUser } = useAuth();
-
+  const { login } = useAuthReducer();
   const [form, setForm] = useState<RegisterInput>({
     username: '',
+    email: '', 
     password: '',
   });
-
   const [error, setError] = useState<string>('');
 
   const mutation = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      setUser(data);
+      login(data);
       localStorage.setItem('user', JSON.stringify(data));
-      setForm({ username: '', password: '' });
+      setForm({ username: '', email: '', password: '' }); 
     },
     onError: (err: Error) => {
       setError(err.message || 'Registration failed. Try a different username.');
@@ -35,19 +34,17 @@ const RegisterForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    mutation.mutate(form);
+    mutation.mutate(form); // ✅ now includes email
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-   className="bg-zinc-900 text-zinc-100 p-8 rounded-2xl shadow-lg max-w-md w-full mx-auto mt-20 space-y-6 border border-zinc-800"
+      className="bg-zinc-900 text-zinc-100 p-8 rounded-2xl shadow-lg max-w-md w-full mx-auto mt-20 space-y-6 border border-zinc-800"
     >
       <h2 className="text-2xl font-bold text-center">Create an Account</h2>
 
-      {error && (
-        <p className="text-red-400 text-sm text-center">{error}</p>
-      )}
+      {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
       <div>
         <label htmlFor="username" className="block text-sm font-medium text-zinc-300 mb-1">
@@ -62,7 +59,22 @@ const RegisterForm = () => {
           onChange={handleChange}
           className="w-full bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-500 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
-          aria-label="Username"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-1">
+          Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          placeholder="Enter your email"
+          value={form.email}
+          onChange={handleChange}
+          className="w-full bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-500 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
         />
       </div>
 
@@ -79,7 +91,6 @@ const RegisterForm = () => {
           onChange={handleChange}
           className="w-full bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-500 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
-          aria-label="Password"
         />
       </div>
 
