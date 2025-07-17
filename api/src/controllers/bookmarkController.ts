@@ -1,20 +1,22 @@
 import { Request, Response } from 'express';
 import Bookmark from '../models/Bookmark';
 import { IBookmark } from '../types/bookmark.types';
+import { HttpStatus } from '../constants/status';
+import { BookmarkMessage } from '../constants/messages';
 
 // GET /api/bookmarks/user?userId=xxx
 export const getUserBookmarks = async (req: Request, res: Response) => {
   const { userId } = req.query;
 
   if (!userId || typeof userId !== 'string') {
-    return res.status(400).json({ error: 'Missing or invalid userId' });
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: BookmarkMessage.MISSING_USER_ID });
   }
 
   try {
     const bookmarks = await Bookmark.find({ userId });
-    return res.status(200).json(bookmarks);
+    return res.status(HttpStatus.OK).json(bookmarks);
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to fetch bookmarks' });
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: BookmarkMessage.FETCH_FAILED });
   }
 };
 
@@ -23,14 +25,14 @@ export const createBookmark = async (req: Request, res: Response) => {
   const { userId, title, url } = req.body as IBookmark;
 
   if (!userId || !title || !url) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: BookmarkMessage.MISSING_FIELDS });
   }
 
   try {
     const newBookmark = await Bookmark.create({ userId, title, url });
-    return res.status(201).json(newBookmark);
+    return res.status(HttpStatus.CREATED).json(newBookmark);
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to create bookmark' });
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: BookmarkMessage.CREATE_FAILED });
   }
 };
 
@@ -42,11 +44,11 @@ export const deleteBookmark = async (req: Request, res: Response) => {
     const deleted = await Bookmark.findByIdAndDelete(id);
 
     if (!deleted) {
-      return res.status(404).json({ error: 'Bookmark not found' });
+      return res.status(HttpStatus.NOT_FOUND).json({ error: BookmarkMessage.NOT_FOUND });
     }
 
-    return res.status(200).json({ message: 'Bookmark deleted' });
+    return res.status(HttpStatus.OK).json({ message: 'Bookmark deleted' });
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to delete bookmark' });
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: BookmarkMessage.DELETE_FAILED });
   }
 };

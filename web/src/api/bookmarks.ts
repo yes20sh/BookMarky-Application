@@ -4,6 +4,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import type { IBookmark, CreateBookmarkInput } from '../types/index';
+import { BookmarkError } from '../constants/errors';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL + '/bookmarks';
 
@@ -11,7 +12,7 @@ const fetchUserBookmarks = async (userId: string): Promise<IBookmark[]> => {
   const res = await fetch(`${API_URL}/user?userId=${encodeURIComponent(userId)}`);
   if (!res.ok) {
     const error = await res.text();
-    throw new Error(`Failed to fetch bookmarks: ${error}`);
+    throw new Error(`${BookmarkError.FETCH_FAILED}: ${error}`);
   }
   return res.json();
 };
@@ -24,7 +25,7 @@ const createBookmark = async (bookmark: CreateBookmarkInput): Promise<IBookmark>
   });
   if (!res.ok) {
     const error = await res.text();
-    throw new Error(`Failed to create bookmark: ${error}`);
+    throw new Error(`${BookmarkError.CREATE_FAILED}: ${error}`);
   }
   return res.json();
 };
@@ -35,7 +36,7 @@ const deleteBookmark = async (id: string): Promise<void> => {
   });
   if (!res.ok) {
     const error = await res.text();
-    throw new Error(`Failed to delete bookmark: ${error}`);
+    throw new Error(`${BookmarkError.DELETE_FAILED}: ${error}`);
   }
 };
 
@@ -43,7 +44,7 @@ export const useBookmarksQuery = (userId: string) =>
   useQuery({
     queryKey: ['bookmarks', userId],
     queryFn: () => fetchUserBookmarks(userId),
-    enabled: !!userId, // only fetch when userId exists
+    enabled: !!userId,
   });
 
 export const useCreateBookmarkMutation = () => {
