@@ -1,23 +1,26 @@
-import { useAuth } from '../hooks/useAuth';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import BookmarkList from '../components/BookmarkList';
 import CreateBookmarkForm from '../components/CreateBookmarkForm';
+import { logout } from '../redux/slices/authSlice';
+import { useAuthReducer } from '../hooks/useAuthReducer'; 
 
 const Bookmarks = () => {
-  const { user, logout } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const { user } = useAuthReducer(); 
   useEffect(() => {
-    if (!user) {
+    if (!user?.userId) {
       navigate('/login');
     }
   }, [user, navigate]);
 
-  if (!user) return null;
+  if (!user?.userId) return null;
 
   const handleLogout = () => {
-    if (logout) logout();
+    dispatch(logout());
+    localStorage.removeItem('user');
     navigate('/home');
   };
 

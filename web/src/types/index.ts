@@ -1,11 +1,8 @@
-// =======================
-// User Types
-// =======================
 
 export interface IUser {
-  _id?: string;
+  _id?: string;              
   username: string;
-  password?: string; // Optional when retrieved from backend
+  password?: string;           
 }
 
 export interface LoginInput {
@@ -15,20 +12,18 @@ export interface LoginInput {
 
 export interface RegisterInput {
   username: string;
+  email: string;       
   password: string;
 }
+
 
 export interface AuthResponse {
   userId: string;
   username: string;
 }
 
-// =======================
-// Bookmark Types
-// =======================
-
 export interface IBookmark {
-  _id?: string;
+  _id?: string;                
   userId: string;
   title: string;
   url: string;
@@ -40,4 +35,17 @@ export interface CreateBookmarkInput {
   userId: string;
   title: string;
   url: string;
+}
+
+// export interface AuthState {
+//   userId: string | null;
+//   username: string | null;
+//   loading: boolean;
+//   error: string | null;
+// }
+// types/index.ts
+
+export interface AuthState {
+  userId: string | null;
+  username: string | null;
 }

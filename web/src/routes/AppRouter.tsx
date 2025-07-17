@@ -1,14 +1,16 @@
 import { type JSX } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../redux/store';
+
 import Home from '../pages/Home';
 import Login from '../pages/Login';
-import Register from '../pages/Register'; // ✅ New Register page
+import Register from '../pages/Register';
 import Bookmarks from '../pages/Bookmarks';
-import { useAuth } from '../hooks/useAuth';
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-  const { user } = useAuth();
-  return user ? children : <Navigate to="/login" replace />;
+  const userId = useSelector((state: RootState) => state.auth.userId);
+  return userId ? children : <Navigate to="/login" replace />;
 };
 
 const AppRouter = () => {
@@ -17,7 +19,7 @@ const AppRouter = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} /> {/* ✅ Register route */}
+        <Route path="/register" element={<Register />} />
         <Route
           path="/bookmarks"
           element={

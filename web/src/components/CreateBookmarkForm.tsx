@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { useCreateBookmarkMutation } from '../api/bookmarks';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthReducer } from '../hooks/useAuthReducer';
 
 const CreateBookmarkForm = () => {
-  const { user } = useAuth();
+  const { user } = useAuthReducer(); // ✅ get user from custom hook
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const { mutate: createBookmark, isPending } = useCreateBookmarkMutation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !url || !user) return;
+    if (!title || !url || !user?.userId) return;
 
     createBookmark(
       { title, url, userId: user.userId },
